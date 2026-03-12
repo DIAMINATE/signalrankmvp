@@ -120,7 +120,7 @@ export type GenerationStep = { label: string; done: boolean };
 export async function createProjectAndGenerate(
   dispatch: Dispatch<Action>,
   state: StoreState,
-  input: { segmentName: string; industry: string; region: string; companySize: string; notes: string },
+  input: { segmentName: string; companyName: string; industry: string; region: string; companySize: string; notes: string },
   onStep: (steps: GenerationStep[]) => void
 ): Promise<string> {
   const availableIds = STATIC_PROJECT_IDS.filter(
@@ -131,7 +131,7 @@ export async function createProjectAndGenerate(
 
   const project: Project = {
     id: projectId,
-    companyName: CLAY_COMPANY.companyName,
+    companyName: input.companyName || CLAY_COMPANY.companyName,
     websiteUrl: CLAY_COMPANY.websiteUrl,
     industry: input.industry,
     region: input.region,
@@ -163,7 +163,7 @@ export async function createProjectAndGenerate(
   onStep([...steps]);
 
   const icp = generateICP({
-    companyName: CLAY_COMPANY.companyName,
+    companyName: input.companyName || CLAY_COMPANY.companyName,
     websiteUrl: CLAY_COMPANY.websiteUrl,
     industry: input.industry,
     region: input.region,
