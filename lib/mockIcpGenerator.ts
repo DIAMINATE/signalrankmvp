@@ -59,7 +59,10 @@ function generateSummary(input: ICPInput): string {
       ? "mid-market"
       : "enterprise";
 
-  return `${sizeLabel} ${input.industry} companies in ${input.region} that are likely experiencing operational inefficiencies addressable by ${input.companyName}'s solution. These organizations typically have established teams and budget authority for technology purchases, and are actively seeking to optimize their workflows and reduce costs.`;
+  const industry = input.industry || "technology";
+  const region = input.region || "global";
+
+  return `Based on an analysis of ${input.companyName}'s web presence and market positioning, the strongest-fit prospects appear to be ${sizeLabel} ${industry} companies in ${region}. These organizations are likely experiencing operational challenges that align with ${input.companyName}'s core value proposition. They typically have established teams with budget authority for technology purchases, and show signals of actively evaluating solutions in this space.`;
 }
 
 export function generateICP(input: ICPInput): GeneratedICP {

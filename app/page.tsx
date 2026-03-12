@@ -33,7 +33,7 @@ export default function HomePage() {
               href={`/projects/${completed.id}`}
               className="group inline-flex items-center gap-2.5 rounded-2xl bg-neutral-900 px-7 py-4 text-[15px] font-semibold text-white transition-all hover:bg-neutral-800 hover:shadow-lg hover:shadow-neutral-900/10"
             >
-              See Clay's demo
+              See {completed.companyName} demo
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           )}

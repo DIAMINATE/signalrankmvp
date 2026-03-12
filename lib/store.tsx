@@ -120,7 +120,7 @@ export type GenerationStep = { label: string; done: boolean };
 export async function createProjectAndGenerate(
   dispatch: Dispatch<Action>,
   state: StoreState,
-  input: { segmentName: string; companyName: string; industry: string; region: string; companySize: string; notes: string },
+  input: { segmentName: string; companyName: string; websiteUrl?: string; industry: string; region: string; companySize: string; notes: string },
   onStep: (steps: GenerationStep[]) => void
 ): Promise<string> {
   const availableIds = STATIC_PROJECT_IDS.filter(
@@ -132,7 +132,7 @@ export async function createProjectAndGenerate(
   const project: Project = {
     id: projectId,
     companyName: input.companyName || CLAY_COMPANY.companyName,
-    websiteUrl: CLAY_COMPANY.websiteUrl,
+    websiteUrl: input.websiteUrl || CLAY_COMPANY.websiteUrl,
     industry: input.industry,
     region: input.region,
     companySize: input.companySize,
@@ -145,10 +145,11 @@ export async function createProjectAndGenerate(
 
   dispatch({ type: "ADD_PROJECT", project });
 
+  const name = input.companyName || CLAY_COMPANY.companyName;
   const steps: GenerationStep[] = [
-    { label: "Analyzing website signals", done: false },
-    { label: "Identifying industry pain points", done: false },
-    { label: "Matching buyer personas", done: false },
+    { label: `Researching ${name}'s website & public data`, done: false },
+    { label: `Identifying ${input.industry || "industry"} pain points`, done: false },
+    { label: `Matching buyer personas for ${name}`, done: false },
     { label: "Scoring confidence level", done: false },
   ];
 
@@ -164,7 +165,7 @@ export async function createProjectAndGenerate(
 
   const icp = generateICP({
     companyName: input.companyName || CLAY_COMPANY.companyName,
-    websiteUrl: CLAY_COMPANY.websiteUrl,
+    websiteUrl: input.websiteUrl || CLAY_COMPANY.websiteUrl,
     industry: input.industry,
     region: input.region,
     companySize: input.companySize,

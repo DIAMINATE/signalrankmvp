@@ -32,6 +32,7 @@ export default function NewProjectPage() {
 
   const [segmentName, setSegmentName] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
   const [industry, setIndustry] = useState("");
   const [region, setRegion] = useState("");
   const [companySize, setCompanySize] = useState("");
@@ -44,7 +45,7 @@ export default function NewProjectPage() {
     setGenerating(true);
     const projectId = await createProjectAndGenerate(
       dispatch, store,
-      { segmentName, companyName, industry, region, companySize, notes },
+      { segmentName, companyName, websiteUrl, industry, region, companySize, notes },
       setSteps
     );
     await new Promise((r) => setTimeout(r, 600));
@@ -74,12 +75,25 @@ export default function NewProjectPage() {
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-6">
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium text-neutral-600">Company name</label>
+            <label className="mb-1.5 block text-[13px] font-medium text-neutral-600">Your company</label>
             <Input
               required
               placeholder="e.g. Acme Corp"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
+              className="h-12 rounded-xl border-neutral-200 bg-white text-[15px] shadow-none"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-[12px] font-medium text-neutral-500">
+              Website <span className="text-neutral-300">(optional)</span>
+            </label>
+            <Input
+              type="url"
+              placeholder="https://yourcompany.com"
+              value={websiteUrl}
+              onChange={(e) => setWebsiteUrl(e.target.value)}
               className="h-12 rounded-xl border-neutral-200 bg-white text-[15px] shadow-none"
             />
           </div>
