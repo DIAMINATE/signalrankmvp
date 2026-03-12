@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
 import type { GenerationStep } from "@/lib/store";
 
 interface GenerationLoaderProps {
@@ -10,64 +10,57 @@ interface GenerationLoaderProps {
 
 export function GenerationLoader({
   steps,
-  title = "Generating Draft ICP Hypothesis",
+  title = "Generating draft ICP hypothesis",
 }: GenerationLoaderProps) {
   const completedCount = steps.filter((s) => s.done).length;
-  const allDone = completedCount === steps.length;
+  const allDone = completedCount === steps.length && steps.length > 0;
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-6">
+      <div className="w-full max-w-xs space-y-10">
         <div className="text-center">
-          {!allDone && (
-            <Loader2 className="mx-auto mb-4 size-6 animate-spin text-neutral-400" />
-          )}
-          {allDone && (
-            <div className="mx-auto mb-4 flex size-8 items-center justify-center rounded-full bg-emerald-100">
-              <Check className="size-4 text-emerald-600" />
-            </div>
-          )}
-          <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-          <p className="mt-1 text-sm text-neutral-500">
-            {allDone ? "Complete" : "This takes a few seconds"}
+          <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+          <p className="mt-2 text-sm text-neutral-400">
+            {allDone ? "Done" : "Analyzing signals..."}
           </p>
         </div>
 
-        <div className="space-y-3">
-          {steps.map((step, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 transition-opacity duration-300"
-              style={{ opacity: step.done || i <= completedCount ? 1 : 0.3 }}
-            >
-              <div className="flex size-5 shrink-0 items-center justify-center">
-                {step.done ? (
-                  <Check className="size-4 text-emerald-500" />
-                ) : i === completedCount ? (
-                  <Loader2 className="size-4 animate-spin text-neutral-400" />
-                ) : (
-                  <div className="size-1.5 rounded-full bg-neutral-200" />
-                )}
-              </div>
-              <span
-                className={`text-sm ${
-                  step.done
-                    ? "text-neutral-900"
-                    : i === completedCount
-                    ? "text-neutral-600"
-                    : "text-neutral-400"
-                }`}
+        <div className="space-y-4">
+          {steps.map((step, i) => {
+            const isActive = !step.done && i === completedCount;
+            const isPending = !step.done && i > completedCount;
+            return (
+              <div
+                key={i}
+                className="flex items-center gap-3"
+                style={{
+                  opacity: isPending ? 0.25 : 1,
+                  transition: "opacity 0.4s ease",
+                }}
               >
-                {step.label}
-              </span>
-            </div>
-          ))}
+                <div className="flex size-6 shrink-0 items-center justify-center">
+                  {step.done ? (
+                    <div className="flex size-5 items-center justify-center rounded-full bg-emerald-500">
+                      <Check className="size-3 text-white" strokeWidth={3} />
+                    </div>
+                  ) : isActive ? (
+                    <div className="size-5 animate-pulse rounded-full border-2 border-neutral-300" />
+                  ) : (
+                    <div className="size-2 rounded-full bg-neutral-200" />
+                  )}
+                </div>
+                <span className={`text-[14px] ${step.done ? "text-neutral-900" : isActive ? "text-neutral-600" : "text-neutral-300"}`}>
+                  {step.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="h-1 overflow-hidden rounded-full bg-neutral-100">
+        <div className="h-0.5 overflow-hidden rounded-full bg-neutral-100">
           <div
-            className="h-full rounded-full bg-neutral-900 transition-all duration-500 ease-out"
-            style={{ width: `${(completedCount / steps.length) * 100}%` }}
+            className="h-full rounded-full bg-neutral-900 transition-all duration-700 ease-out"
+            style={{ width: steps.length > 0 ? `${(completedCount / steps.length) * 100}%` : "0%" }}
           />
         </div>
       </div>

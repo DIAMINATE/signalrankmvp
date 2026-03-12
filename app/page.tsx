@@ -1,97 +1,65 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useStore } from "@/lib/store";
-import { StatusBadge } from "@/components/status-badge";
 
-function getHref(project: { id: string; status: string }) {
-  switch (project.status) {
-    case "draft":
-      return `/projects/${project.id}/icp`;
-    case "icp_generated":
-      return `/projects/${project.id}/icp`;
-    case "icp_verified":
-      return `/projects/${project.id}/leads`;
-    case "leads_ranked":
-      return `/projects/${project.id}/leads`;
-    default:
-      return `/projects/${project.id}/icp`;
-  }
-}
-
-function timeAgo(dateString: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
-  if (seconds < 60) return "just now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-}
-
-export default function DashboardPage() {
+export default function HomePage() {
   const { projects } = useStore();
+  const completed = projects.find((p) => p.status === "leads_ranked");
 
   return (
-    <div className="space-y-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-sm text-neutral-500">Clay</p>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Targeting Segments
-          </h1>
-          <p className="mt-1 max-w-lg text-sm leading-relaxed text-neutral-500">
-            Each segment represents an ICP hypothesis for a specific market.
-            Corrections you make improve future generation accuracy.
-          </p>
+    <div className="flex min-h-screen flex-col items-center justify-center px-6">
+      <div className="w-full max-w-lg text-center">
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-1.5 text-[12px] font-medium tracking-wide text-neutral-500">
+          <span className="size-1.5 rounded-full bg-emerald-400" />
+          SignalRank
         </div>
-        <Link
-          href="/projects/new"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-neutral-900 px-3.5 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-        >
-          <Plus className="size-3.5" />
-          New Segment
-        </Link>
-      </div>
 
-      {projects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-neutral-200 py-20 text-center">
-          <p className="text-sm font-medium text-neutral-900">
-            No segments yet
-          </p>
-          <p className="mt-1 text-sm text-neutral-500">
-            Create your first targeting segment to get started.
-          </p>
-        </div>
-      ) : (
-        <div className="divide-y divide-neutral-100 rounded-xl border border-neutral-200">
-          {projects.map((project) => (
+        <h1 className="text-[42px] font-bold leading-[1.1] tracking-tight text-neutral-900">
+          Find your best-fit
+          <br />
+          <span className="text-neutral-300">accounts, faster</span>
+        </h1>
+
+        <p className="mx-auto mt-5 max-w-sm text-[16px] leading-relaxed text-neutral-400">
+          Generate an ICP hypothesis, verify it with your expertise,
+          and get a ranked list of who to call first.
+        </p>
+
+        <div className="mt-10 flex flex-col items-center gap-3">
+          {completed && (
             <Link
-              key={project.id}
-              href={getHref(project)}
-              className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-neutral-50"
+              href={`/projects/${completed.id}`}
+              className="group inline-flex items-center gap-2.5 rounded-2xl bg-neutral-900 px-7 py-4 text-[15px] font-semibold text-white transition-all hover:bg-neutral-800 hover:shadow-lg hover:shadow-neutral-900/10"
             >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-sm font-medium text-neutral-900">
-                    {project.segmentName || project.companyName}
-                  </span>
-                  <StatusBadge status={project.status} />
-                </div>
-                <p className="mt-0.5 truncate text-xs text-neutral-400">
-                  {project.industry} · {project.region} · {project.companySize}
-                </p>
-              </div>
-              <span className="shrink-0 text-xs text-neutral-400">
-                {timeAgo(project.updatedAt)}
-              </span>
-              <ArrowRight className="size-4 shrink-0 text-neutral-300" />
+              See Clay's demo
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-          ))}
+          )}
+          <Link
+            href="/projects/new"
+            className="text-[13px] text-neutral-400 transition-colors hover:text-neutral-600"
+          >
+            or start a new segment →
+          </Link>
         </div>
-      )}
+
+        {projects.length > 1 && (
+          <div className="mt-16 space-y-1.5">
+            <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-neutral-300">Other segments</p>
+            {projects.filter((p) => p.id !== completed?.id).map((p) => (
+              <Link
+                key={p.id}
+                href={`/projects/${p.id}`}
+                className="block text-[13px] text-neutral-400 transition-colors hover:text-neutral-600"
+              >
+                {p.segmentName}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
