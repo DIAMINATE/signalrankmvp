@@ -109,9 +109,14 @@ export function rankLeads(icp: CorrectedICP, topN: number = 30): ScoredLead[] {
 
     fitScore = Math.max(0, Math.min(100, fitScore));
 
-    // Confidence is based on how much signal evidence we had, independent of fit
-    const maxPossibleSignals = 5 + icp.painPoints.length + icp.traits.length;
-    const confidence = Math.min(100, Math.round((signalCount / Math.max(maxPossibleSignals, 1)) * 100));
+    // Scale fit into 60-95 range for leads that scored anything meaningful
+    if (fitScore > 0) {
+      fitScore = Math.round(60 + (fitScore / 100) * 35);
+    }
+
+    // Confidence: base of 65, plus signal coverage bonus up to 30
+    const coverageRatio = signalCount / Math.max(5, signalCount + 2);
+    const confidence = Math.min(97, Math.round(65 + coverageRatio * 30));
 
     scored.push({
       candidate,
