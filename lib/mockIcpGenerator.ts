@@ -35,21 +35,20 @@ function extractDomainHint(url: string): string | null {
 }
 
 function calculateConfidence(input: ICPInput): number {
-  let score = 0;
-  const maxScore = 100;
+  let score = 72;
 
-  if (input.industry && input.industry !== "") score += 25;
-  if (input.region && input.region !== "") score += 20;
-  if (input.companySize && input.companySize !== "") score += 20;
-  if (input.websiteUrl && input.websiteUrl !== "") score += 10;
+  if (input.industry && input.industry !== "") score += 6;
+  if (input.region && input.region !== "") score += 5;
+  if (input.companySize && input.companySize !== "") score += 5;
+  if (input.websiteUrl && input.websiteUrl !== "") score += 2;
 
   const domainHint = extractDomainHint(input.websiteUrl);
-  if (domainHint) score += 10;
-  if (domainHint && domainHint === input.industry) score += 5;
+  if (domainHint) score += 2;
+  if (domainHint && domainHint === input.industry) score += 1;
 
-  if (input.notes && input.notes.trim().length > 20) score += 10;
+  if (input.notes && input.notes.trim().length > 20) score += 3;
 
-  return Math.min(score, maxScore);
+  return Math.min(score, 96);
 }
 
 function generateSummary(input: ICPInput): string {
