@@ -59,8 +59,19 @@ export default function ProjectPage() {
 
   if (!project) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-[14px] text-neutral-400">
-        Not found. <Link href="/" className="ml-1 underline">Back</Link>
+      <div className="flex min-h-screen flex-col items-center justify-center text-center px-6">
+        <h2 className="text-xl font-semibold text-neutral-900">No segment here yet</h2>
+        <p className="mt-2 text-[14px] text-neutral-400 max-w-xs">
+          This segment hasn't been created. Start from the homepage or create a new one.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Link href="/" className="rounded-xl bg-neutral-900 px-5 py-2.5 text-[14px] font-medium text-white hover:bg-neutral-800">
+            Go home
+          </Link>
+          <Link href="/projects/new" className="rounded-xl border border-neutral-200 px-5 py-2.5 text-[14px] text-neutral-600 hover:bg-white">
+            New segment
+          </Link>
+        </div>
       </div>
     );
   }
