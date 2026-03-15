@@ -28,11 +28,13 @@ This guide covers deploying the app with ICP extraction working on GitHub Pages.
 
 1. In your repo: **Settings** → **Secrets and variables** → **Actions**.
 
-2. Go to the **Variables** tab and add:
+2. Go to the **Variables** tab (not Secrets) and click **New repository variable**:
    - **Name**: `NEXT_PUBLIC_ICP_EXTRACTOR_URL`
-   - **Value**: Your Railway URL (e.g. `https://icp-extractor-production-xxxx.up.railway.app`) — no trailing slash.
+   - **Value**: Your Railway URL (e.g. `https://icp-extractor-production-xxxx.up.railway.app`) — no trailing slash, no port.
 
-3. Save. The next deploy will use this URL.
+3. Save. **Re-run the deploy workflow** (Actions → Deploy to GitHub Pages → Re-run) so the new variable is baked into the build.
+
+4. **Verify**: Check the workflow logs for "NEXT_PUBLIC_ICP_EXTRACTOR_URL is configured." If you see a warning instead, the variable is not set correctly.
 
 ## Step 3: Deploy
 

@@ -32,6 +32,14 @@ jobs:
 
       - run: npm ci
 
+      - name: Verify ICP extractor URL
+        run: |
+          if [ -z "${{ vars.NEXT_PUBLIC_ICP_EXTRACTOR_URL }}" ]; then
+            echo "::warning::NEXT_PUBLIC_ICP_EXTRACTOR_URL is not set. ICP extraction will fall back to mock data on the deployed site. Add it in Settings → Secrets and variables → Actions → Variables."
+          else
+            echo "NEXT_PUBLIC_ICP_EXTRACTOR_URL is configured."
+          fi
+
       - run: npm run build
         env:
           NEXT_PUBLIC_ICP_EXTRACTOR_URL: ${{ vars.NEXT_PUBLIC_ICP_EXTRACTOR_URL }}
