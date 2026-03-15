@@ -165,9 +165,12 @@ export async function createProjectAndGenerate(
 
   if (hasWebsiteUrl) {
     try {
-      const extractorBase =
-        typeof process !== "undefined" &&
-        process.env?.NEXT_PUBLIC_ICP_EXTRACTOR_URL?.trim();
+      let extractorBase =
+        (typeof process !== "undefined" &&
+        process.env?.NEXT_PUBLIC_ICP_EXTRACTOR_URL?.trim()) || "";
+      if (extractorBase && !extractorBase.startsWith("http")) {
+        extractorBase = `https://${extractorBase}`;
+      }
       const apiUrl = extractorBase
         ? `${extractorBase.replace(/\/$/, "")}/extract-icp`
         : "/api/extract-icp";
