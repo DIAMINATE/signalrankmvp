@@ -86,16 +86,28 @@ export default function NewProjectPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-neutral-500">
-              Website <span className="text-neutral-300">(optional)</span>
+            <label className="mb-1.5 block text-[13px] font-medium text-neutral-600">
+              Website
+              {websiteUrl.trim() ? (
+                <span className="ml-2 text-[11px] font-normal text-emerald-600">
+                  · Will extract ICP from website
+                </span>
+              ) : (
+                <span className="ml-2 text-neutral-300">(optional)</span>
+              )}
             </label>
             <Input
               type="url"
-              placeholder="https://yourcompany.com"
+              placeholder="https://yourcompany.com or clay.com"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
               className="h-12 rounded-xl border-neutral-200 bg-white text-[15px] shadow-none"
             />
+            {websiteUrl.trim() && (
+              <p className="mt-1.5 text-[12px] text-neutral-400">
+                ICP will be extracted from customers, pricing, testimonials, and case studies.
+              </p>
+            )}
           </div>
 
           <div>
@@ -162,7 +174,9 @@ export default function NewProjectPage() {
             type="submit"
             className="w-full rounded-2xl bg-neutral-900 py-4 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-800"
           >
-            Generate draft ICP →
+            {websiteUrl.trim()
+              ? "Extract ICP from website →"
+              : "Generate draft ICP →"}
           </button>
         </form>
       </div>

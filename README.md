@@ -29,6 +29,8 @@ npm run build
 
 The `out/` directory is a fully static site ready for GitHub Pages. Configure your repo to serve from the `out/` folder or copy its contents to a `gh-pages` branch.
 
+**ICP extraction on deployment:** To enable website-based ICP extraction when deployed, see [DEPLOYMENT.md](DEPLOYMENT.md) for Railway + GitHub Actions setup.
+
 ---
 
 ## Architecture

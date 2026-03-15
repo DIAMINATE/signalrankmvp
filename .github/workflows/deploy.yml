@@ -33,6 +33,8 @@ jobs:
       - run: npm ci
 
       - run: npm run build
+        env:
+          NEXT_PUBLIC_ICP_EXTRACTOR_URL: ${{ vars.NEXT_PUBLIC_ICP_EXTRACTOR_URL }}
 
       - uses: actions/configure-pages@v5
 

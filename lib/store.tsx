@@ -146,8 +146,14 @@ export async function createProjectAndGenerate(
   dispatch({ type: "ADD_PROJECT", project });
 
   const name = input.companyName || CLAY_COMPANY.companyName;
+  const hasWebsiteUrl = Boolean(input.websiteUrl?.trim());
   const steps: GenerationStep[] = [
-    { label: `Researching ${name}'s website & public data`, done: false },
+    {
+      label: hasWebsiteUrl
+        ? `Crawling ${input.websiteUrl} for ICP data`
+        : `Researching ${name}'s website & public data`,
+      done: false,
+    },
     { label: `Identifying ${input.industry || "industry"} pain points`, done: false },
     { label: `Matching buyer personas for ${name}`, done: false },
     { label: "Scoring confidence level", done: false },
@@ -155,28 +161,69 @@ export async function createProjectAndGenerate(
 
   onStep([...steps]);
 
-  await sleep(800);
+  let icp: Awaited<ReturnType<typeof generateICP>>;
+
+  if (hasWebsiteUrl) {
+    try {
+      const extractorBase =
+        typeof process !== "undefined" &&
+        process.env?.NEXT_PUBLIC_ICP_EXTRACTOR_URL?.trim();
+      const apiUrl = extractorBase
+        ? `${extractorBase.replace(/\/$/, "")}/extract-icp`
+        : "/api/extract-icp";
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: input.websiteUrl!.trim() }),
+        signal: AbortSignal.timeout(120000),
+      });
+      const data = await res.json();
+      if (data?.success && data?.app_icp) {
+        icp = {
+          summary: data.app_icp.summary || "",
+          painPoints: data.app_icp.painPoints || [],
+          buyerTitles: data.app_icp.buyerTitles || [],
+          traits: data.app_icp.traits || [],
+          excludedTraits: data.app_icp.excludedTraits || [],
+          confidence: data.app_icp.confidence ?? 70,
+        };
+      } else {
+        throw new Error(data?.error || "Extraction failed");
+      }
+    } catch (err) {
+      icp = generateICP({
+        companyName: input.companyName || CLAY_COMPANY.companyName,
+        websiteUrl: input.websiteUrl || CLAY_COMPANY.websiteUrl,
+        industry: input.industry,
+        region: input.region,
+        companySize: input.companySize,
+        notes: input.notes,
+      });
+    }
+  } else {
+    icp = generateICP({
+      companyName: input.companyName || CLAY_COMPANY.companyName,
+      websiteUrl: input.websiteUrl || CLAY_COMPANY.websiteUrl,
+      industry: input.industry,
+      region: input.region,
+      companySize: input.companySize,
+      notes: input.notes,
+    });
+  }
+
+  await sleep(400);
   steps[0].done = true;
   onStep([...steps]);
 
-  await sleep(700);
+  await sleep(500);
   steps[1].done = true;
   onStep([...steps]);
 
-  const icp = generateICP({
-    companyName: input.companyName || CLAY_COMPANY.companyName,
-    websiteUrl: input.websiteUrl || CLAY_COMPANY.websiteUrl,
-    industry: input.industry,
-    region: input.region,
-    companySize: input.companySize,
-    notes: input.notes,
-  });
-
-  await sleep(600);
+  await sleep(400);
   steps[2].done = true;
   onStep([...steps]);
 
-  await sleep(500);
+  await sleep(300);
   steps[3].done = true;
   onStep([...steps]);
 
